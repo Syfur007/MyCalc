@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">MyCalc</string>
+    <string name="calculate">CALCULATE</string>
+    <string name="age">AGE</string>
+    <string name="in_minutes">IN MINUTES</string>
+    <string name="selectedDate">12/10/2002</string>
+    <string name="below_date">was entered</string>
+    <string name="minutes">00000000</string>
+    <string name="minutes_lived">minutes lived!</string>
+    <string name="enter_date">Select Date</string>
+</resources>
