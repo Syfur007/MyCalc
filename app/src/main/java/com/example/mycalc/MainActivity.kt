@@ -1,63 +1,57 @@
 package com.example.mycalc
 
-import android.app.DatePickerDialog
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
-import java.text.SimpleDateFormat
-import java.util.*
+import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
 
-    private var selectedDate: TextView? = null
-    private var selectedDateText: TextView? = null
-    private var ageInMinutes: TextView? = null
-    private var ageInMinutesText: TextView? = null
+    private var lastNumeric: Boolean = false
+    private var lastDot = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val datePickerBtn: Button = findViewById(R.id.datePickerButton)
-        selectedDate = findViewById(R.id.selectedDate)
-        selectedDateText = findViewById(R.id.selectedDateText)
-        ageInMinutes = findViewById(R.id.ageInMinute)
-        ageInMinutesText = findViewById(R.id.ageInMinuteText)
+    }
 
-        datePickerBtn.setOnClickListener {
-            datePickerOnclick()
+    fun onDigit(view: View) {
+        lastNumeric = true
+        findViewById<TextView>(R.id.tvInput).append((view as Button).text)
+
+    }
+
+    fun onClear(view: View) {
+        findViewById<TextView>(R.id.tvInput).text = ""
+        lastDot = false
+        lastNumeric = false
+    }
+
+    fun onDecimalPoint(view: View) {
+        if(lastNumeric and !lastDot) {
+            findViewById<TextView>(R.id.tvInput).append((view as Button).text)
+            lastDot = true
         }
     }
 
-    fun datePickerOnclick() {
+    fun onOperator(view: View) {
+        if(lastNumeric and !isOperatorAdded()) {
+            findViewById<TextView>(R.id.tvInput).append((view as Button).text)
+            lastNumeric = false
+            lastDot = false
+        }
 
+    }
 
-        val theCalender = Calendar.getInstance()
-
-        val currentYear = theCalender.get(Calendar.YEAR)
-        val currentMonth = theCalender.get(Calendar.MONTH)
-        val currentDay = theCalender.get(Calendar.DAY_OF_MONTH)
-
-
-        DatePickerDialog(this,
-            { view, selectedYear, selectedMonth, selectedDay ->
-
-                selectedDate?.text = "$selectedDay/${selectedMonth+1}/$selectedYear"
-                selectedDateText?.text = "was entered"
-                val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
-                val theDate = sdf.parse(selectedDate?.text as String)
-                val selectedDateInMinute = theDate.time / 60000
-
-                val theCurrentDate = sdf.parse(sdf.format(System.currentTimeMillis()))
-                val currentDateInMinute = theCurrentDate.time / 60000
-
-                ageInMinutes?.text = (currentDateInMinute - selectedDateInMinute).toString()
-                ageInMinutesText?.text = "minutes lived!"
-            }, currentYear, currentMonth, currentDay
-        ).show()
-//
-
+    private fun isOperatorAdded(): Boolean {
+        val tvScreen: TextView = findViewById(R.id.tvInput)
+        return if (tvScreen.text.startsWith("-")) false
+        else {
+            tvScreen.text.contains("%") || tvScreen.text.contains("/")
+                    || tvScreen.text.contains("X") || tvScreen.text.contains("-")
+                    || tvScreen.text.contains("+")
+        }
     }
 }
